@@ -20,7 +20,6 @@ import Soup from 'gi://Soup';
 import Pango from 'gi://Pango';
 import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
-import GdkPixbuf from 'gi://GdkPixbuf';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import { MediaSlider } from './slider.js';
@@ -33,7 +32,6 @@ import { QueueManager } from '../core/queueManager.js';
 
 Gio._promisify(Soup.Session.prototype, "send_and_read_async", "send_and_read_finish");
 Gio._promisify(Gio.File.prototype, "replace_contents_bytes_async", "replace_contents_finish");
-Gio._promisify(GdkPixbuf.Pixbuf, "new_from_stream_async", "new_from_stream_finish");
 
 export class MediaPopup {
     constructor(menu, settings, controlsCallback) {
@@ -858,16 +856,6 @@ export class MediaPopup {
         if (this._isLyricsMode) this._fetchLyrics(info);
     }
 
-    _extractColor(pixbuf) {
-        try {
-            const scaled = pixbuf.scale_simple(1, 1, GdkPixbuf.InterpType.TILES);
-            const pixels = scaled.get_pixels();
-            return `${pixels[0]}, ${pixels[1]}, ${pixels[2]}`;
-        } catch (e) {
-            return null;
-        }
-    }
-
     async loadImage(artUrl) {
         if (!artUrl) return null;
         
@@ -913,23 +901,7 @@ export class MediaPopup {
 
             if (fileReady) {
                 const targetFile = isLocal ? Gio.File.new_for_uri(artUrl) : file;
-                let resultColor = null;
-                
-                try {
-                    const path = targetFile.get_path();
-                    if (path) {
-                        const pixbuf = GdkPixbuf.Pixbuf.new_from_file(path);
-                        resultColor = this._extractColor(pixbuf);
-                    } else {
-                        const inputStream = await targetFile.read_async(null, null);
-                        const pixbuf = await GdkPixbuf.Pixbuf.new_from_stream_async(inputStream, null);
-                        if (pixbuf) resultColor = this._extractColor(pixbuf);
-                    }
-                } catch (e) {
-                    console.warn("[SpotifyController] Pixbuf load failed:", e);
-                }
-                
-                return { uri: targetFile.get_uri(), id: uniqueID, color: resultColor };
+                return { uri: targetFile.get_uri(), id: uniqueID, color: null };
             }
         } catch (e) {
             console.warn(`[SpotifyController] loadImage Error: ${e.message}`);

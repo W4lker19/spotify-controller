@@ -695,8 +695,8 @@ export default class SpotifyControllerPrefs extends ExtensionPreferences {
                 try {
                     Gio.AppInfo.launch_default_for_uri(url, window.get_display().get_app_launch_context());
                 } catch (e) {
-                    try { 
-                        imports.gi.GLib.spawn_command_line_async(`xdg-open ${url}`); 
+                    try {
+                        GLib.spawn_command_line_async(`xdg-open ${url}`);
                     } catch (_) { }
                 }
             });
@@ -776,8 +776,8 @@ export default class SpotifyControllerPrefs extends ExtensionPreferences {
                 Gio.AppInfo.launch_default_for_uri('https://buymeacoffee.com/narkagni',
                     window.get_display().get_app_launch_context());
             } catch (e) {
-                try { 
-                    imports.gi.GLib.spawn_command_line_async('xdg-open https://buymeacoffee.com/narkagni'); 
+                try {
+                    GLib.spawn_command_line_async('xdg-open https://buymeacoffee.com/narkagni');
                 } catch (_) { }
             }
         });
