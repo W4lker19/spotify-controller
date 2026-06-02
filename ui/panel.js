@@ -54,6 +54,10 @@ export const MediaIndicator = GObject.registerClass(
                     if (this.activeProxy) {
                         this.activeProxy.controls().seek(val);
                     }
+                },
+                getVolume: () => this.activeProxy ? this.activeProxy.getVolume() : 1.0,
+                setVolume: (val) => {
+                    this.activeProxy?.setVolume(val);
                 }
             });
 
