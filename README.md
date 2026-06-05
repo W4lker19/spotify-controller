@@ -57,6 +57,7 @@ A visual experience unlike any other GNOME extension.
 - **Dynamic Ambient Background** - Dominant colors are extracted from the current track's cover art and applied as a live gradient across the popup
 - **Spinning Cover Art** - Album art rotates like a vinyl record while music plays; speed and radius are fully adjustable in settings
 - **Polished Hover Effects** - Every button and list item has smooth, custom hover states - YouTube Red on "Play All", Vibrant Purple on "Shuffle", Soft Red on the Heart icon
+- **Pin to Keep Open** - Click the pin icon in the popup header to keep it open while you switch to other windows; click again to return to normal auto-close
 
 ### Real Spotify Playlist Manager
 
@@ -93,10 +94,11 @@ Full control over what plays and when.
 
 One click to sing along.
 
-- **One-Click Overlay** - Tap the cover art to instantly transition to a synchronized lyrics view; tap again to return
+- **One-Tap View Toggle** - A dedicated button in the popup header flips between the cover art and the synchronized lyrics view (tapping the cover still opens lyrics too)
 - **Auto-Scroll** - Lyrics scroll automatically in sync with the track's current timestamp - no manual interaction needed
 - **Click to Seek** - Tap any lyric line to jump playback straight to that moment
 - **Manual Scroll** - Scroll through the lyrics yourself with the mouse wheel; it auto-resumes following the song after a few seconds
+- **Instant on Revisit** - Lyrics are cached in memory and on disk, so a song you've already opened loads instantly and works offline
 
 ### Desktop Notifications
 
@@ -131,8 +133,10 @@ Open the Spotify Controller preferences to fine-tune everything:
 | Next / Previous | Panel buttons or popup controls |
 | Adjust Volume | Panel scroll, or the in-popup volume slider + mute |
 | Seek through track | Click and drag the progress slider |
-| View Lyrics | Click the album art in the popup |
+| View Lyrics | Click the album art, or the toggle button in the popup header |
+| Back to cover art | Click the toggle button in the popup header |
 | Jump to a lyric | Click any line in the lyrics view |
+| Keep popup open | Click the pin icon in the popup header |
 | Set a sleep timer | Click the alarm icon next to the slider |
 | Like current song | Click the Heart icon next to the slider (syncs to Spotify) |
 | Manage playlists | Open the popup → navigate to Playlists |

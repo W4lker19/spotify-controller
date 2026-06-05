@@ -44,6 +44,7 @@ export class MediaPopup {
         this._callbacks = controlsCallback;
 
         this._isPlaying = false;
+        this._pinned = false;
         this._menu.box.add_style_class_name('spotify-popup-menu');
 
         this._currentTrackHash = null;
@@ -217,11 +218,42 @@ export class MediaPopup {
         this._headerItem = new PopupMenu.PopupBaseMenuItem({
             reactive: false, can_focus: false, style_class: 'popup-header-item'
         });
-        this._headerItem.actor.x_align = Clutter.ActorAlign.CENTER;
-        
-        this.headerLabel = new St.Label({ style_class: 'popup-header-label' });
-        this._headerItem.add_child(this.headerLabel);
-        
+
+        const headerBox = new St.BoxLayout({ x_expand: true, style_class: 'popup-header-box' });
+
+        // Lyrics/cover toggle on the left (mirrors the pin button on the right,
+        // keeping the title centered). Dedicated button so users can switch back
+        // to the cover without clicking a lyric line (which seeks playback).
+        this.viewToggleBtn = new St.Button({
+            style_class: 'popup-view-toggle-btn',
+            child: new St.Icon({ icon_name: 'media-view-subtitles-symbolic', style_class: 'popup-view-toggle-icon' }),
+            can_focus: true,
+            y_align: Clutter.ActorAlign.CENTER,
+        });
+        this.viewToggleBtn.connect('clicked', () => {
+            if (this._popupMode === 'normal' || this._popupMode === 'lyrics') this._toggleLyricsView();
+        });
+        headerBox.add_child(this.viewToggleBtn);
+
+        this.headerLabel = new St.Label({
+            style_class: 'popup-header-label',
+            x_expand: true,
+            x_align: Clutter.ActorAlign.CENTER,
+            y_align: Clutter.ActorAlign.CENTER,
+        });
+        headerBox.add_child(this.headerLabel);
+
+        this.pinBtn = new St.Button({
+            style_class: 'popup-pin-btn',
+            child: new St.Icon({ icon_name: 'view-pin-symbolic', style_class: 'popup-pin-icon' }),
+            can_focus: true,
+            y_align: Clutter.ActorAlign.CENTER,
+        });
+        this.pinBtn.connect('clicked', () => this._togglePin());
+        headerBox.add_child(this.pinBtn);
+
+        this._headerItem.add_child(headerBox);
+
         this._contentBox.add_child(this._headerItem.actor);
 
         this._updateHeaderText();
@@ -547,6 +579,7 @@ export class MediaPopup {
     _toggleLyricsView() {
         this._isLyricsMode = !this._isLyricsMode;
         this._popupMode = this._isLyricsMode ? 'lyrics' : 'normal';
+        this._updateViewToggleUI();
         const duration = 500;
 
         if (this._isLyricsMode) {
@@ -575,10 +608,13 @@ export class MediaPopup {
         this._popupMode = mode;
         if (mode === 'playlist' || mode === 'liked') {
             if (this._isLyricsMode) this._toggleLyricsView();
+            if (this.viewToggleBtn) this.viewToggleBtn.hide();
             this._playlistUI.setMode(mode);
             this._updatePlaylistPagesVisibility(true);
         } else {
             this._isLyricsMode = false;
+            if (this.viewToggleBtn) this.viewToggleBtn.show();
+            this._updateViewToggleUI();
             this.lyricsWidget.hide();
             this.lyricsWidget.opacity = 0;
             this._artWrapper.show();
@@ -638,6 +674,40 @@ export class MediaPopup {
     _updateHeaderText() {
         if (this.headerLabel) {
             this.headerLabel.set_text(this._settings.get_string('custom-header-text') || 'Spotify');
+        }
+    }
+
+    // ---- Pin (keep popup open) -------------------------------------------
+
+    _togglePin() {
+        this._pinned = !this._pinned;
+        if (this._callbacks.setPinned) this._callbacks.setPinned(this._pinned);
+        this._updatePinUI();
+    }
+
+    /** Clears the pin from the panel side (e.g. when toggled shut). */
+    unpin() {
+        if (!this._pinned) return;
+        this._pinned = false;
+        if (this._callbacks.setPinned) this._callbacks.setPinned(false);
+        this._updatePinUI();
+    }
+
+    /** Swaps the header toggle icon to reflect the view it switches *to*. */
+    _updateViewToggleUI() {
+        if (!this.viewToggleBtn) return;
+        this.viewToggleBtn.child.icon_name = this._isLyricsMode
+            ? 'image-x-generic-symbolic'      // currently lyrics → click for cover
+            : 'media-view-subtitles-symbolic'; // currently cover → click for lyrics
+    }
+
+    _updatePinUI() {
+        if (!this.pinBtn) return;
+        if (this._pinned) {
+            this.pinBtn.add_style_class_name('pinned');
+            this.pinBtn.child.icon_name = 'view-pin-symbolic';
+        } else {
+            this.pinBtn.remove_style_class_name('pinned');
         }
     }
 

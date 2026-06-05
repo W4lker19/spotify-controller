@@ -229,6 +229,43 @@
     color: #ffffff;
 }
 
+.popup-pin-btn {
+    border-radius: 8px;
+    padding: 3px;
+    color: rgba(255, 255, 255, 0.45);
+    transition-duration: 150ms;
+}
+
+.popup-pin-btn:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.popup-pin-btn.pinned {
+    color: #1db954;
+    background-color: rgba(29, 185, 84, 0.15);
+}
+
+.popup-pin-icon {
+    icon-size: 16px;
+}
+
+.popup-view-toggle-btn {
+    border-radius: 8px;
+    padding: 3px;
+    color: rgba(255, 255, 255, 0.45);
+    transition-duration: 150ms;
+}
+
+.popup-view-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.popup-view-toggle-icon {
+    icon-size: 16px;
+}
+
 /* ==========================================================================
    Playlist UI Components (Clean Flat/Glass Theme)
    ========================================================================== */
